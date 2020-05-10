@@ -22,6 +22,8 @@ public class CovidConnection {
 	
 	// initializes all JPanel/JFrame instances and runs the application:
 	public void run() {
+		DataStore.getInstance().readAllFileData();
+		
 		sm = new StartMenu();
 		bp = new BuyerPortal();
 		sp = new SupplierPortal();

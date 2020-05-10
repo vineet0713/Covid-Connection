@@ -86,17 +86,24 @@ public class StartMenu extends JPanel implements ActionListener {
 		} else {
 			return;
 		}
-		String name = JOptionPane.showInputDialog("Please enter your " + accountType + " " + userType + " name.");
-		if (name == null) { return; }
-		if (accountType.equals("existing") && !name.equals("test")) {
-			message = "The " + userType + " name '" + name + "' does not exist!";
-			JOptionPane.showMessageDialog(null, message, "INVALID NAME", JOptionPane.ERROR_MESSAGE);
+		String username = JOptionPane.showInputDialog("Please enter your " + accountType + " " + userType + " username.");
+		if (username == null) { return; }
+		boolean accountAlreadyExists = DataStore.getInstance().accountExists(username, userType);
+		if (accountType.equals("existing") && !accountAlreadyExists) {
+			message = "The " + userType + " username '" + username + "' does not exist!";
+			JOptionPane.showMessageDialog(null, message, "INVALID USERNAME", JOptionPane.ERROR_MESSAGE);
 			return;
-		}
-		if (accountType.equals("new")) {
-			message = "A " + userType + " with name '" + name + "' has been created!";
+		} else if (accountType.equals("new")) {
+			if (accountAlreadyExists) {
+				message = "The " + userType + " username '" + username + "' already exists!";
+				JOptionPane.showMessageDialog(null, message, "USERNAME EXISTS", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			DataStore.getInstance().addAccount(username, userType, true);
+			message = "A " + userType + " with username '" + username + "' has been created!";
 			JOptionPane.showMessageDialog(null, message, userType.toUpperCase() + " CREATED", JOptionPane.INFORMATION_MESSAGE);
 		}
+		DataStore.getInstance().setCurrentUser(username);
 		timer.stop();
 		(CovidConnection.cards).show(CovidConnection.topPanel, e.getActionCommand());
 	}
