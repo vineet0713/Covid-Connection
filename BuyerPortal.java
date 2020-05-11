@@ -7,24 +7,25 @@ import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.JButton;
-import javax.swing.JTextArea;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Dimension;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class BuyerPortal extends JPanel implements ActionListener {
-	private String[] CATEGORIES = {"ALL", "Masks", "Ventilators", "Pills", "Wheelchairs"};
+public class BuyerPortal extends JPanel {
+	private String[] CATEGORIES = {"Masks", "Ventilators", "Pills", "Wheelchairs"};
 	
 	private JLabel titleLabel;
-	private JButton backButton, searchButton;
-	private JTextArea test;
-	private JComboBox<String> categoryDropdown;
-	private JTextField searchBox;
+	private JButton backButton, addEquipmentButton, submitButton;
+	private JTable table;
+	private JScrollPane scrollPane;
+	// private JComboBox<String> categoryDropdown;
 	
 	public BuyerPortal() {
 		setLayout(null);
@@ -51,38 +52,61 @@ public class BuyerPortal extends JPanel implements ActionListener {
 		titleLabel.setBounds(140, 20, 1000, 75);
 		add(titleLabel);
 		
+		/*
 		categoryDropdown = new JComboBox<String>(CATEGORIES);
 		categoryDropdown.setFont(new Font("Chalkduster", Font.PLAIN, 15));
 		categoryDropdown.setForeground(Color.DARK_GRAY);
 		categoryDropdown.setBounds(20, 125, 250, 50);
 		add(categoryDropdown);
+		*/
 		
-		searchBox = new JTextField();
-		searchBox.setFont(new Font("Chalkduster", Font.PLAIN, 15));
-		searchBox.setForeground(Color.DARK_GRAY);
-		searchBox.setBounds(300, 125, 835, 50);
-		searchBox.addActionListener(this);
-		add(searchBox);
+		addEquipmentButton = new JButton("+ ADD NEW EQUIPMENT");
+		addEquipmentButton.setFont(new Font("Chalkduster", Font.PLAIN, 30));
+		addEquipmentButton.setForeground(Color.DARK_GRAY);
+		addEquipmentButton.setBounds(150, 125, 425, 65);
+		addEquipmentButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DefaultTableModel model = (DefaultTableModel)(table.getModel());
+				model.addRow(new Object[]{"New Category", "New Quantity", "New Place"});
+			}
+		});
+		add(addEquipmentButton);
 		
-		searchButton = new JButton("SEARCH");
-		searchButton.setFont(new Font("Chalkduster", Font.PLAIN, 15));
-		searchButton.setForeground(Color.DARK_GRAY);
-		searchButton.setBounds(1160, 125, 100, 50);
-		searchButton.addActionListener(this);
-		add(searchButton);
+		submitButton = new JButton("SUBMIT ALL REQUESTS");
+		submitButton.setFont(new Font("Chalkduster", Font.PLAIN, 30));
+		submitButton.setForeground(Color.DARK_GRAY);
+		submitButton.setBounds(725, 125, 400, 65);
+		submitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				traverseTableData();
+				// TODO: Submit the requests!
+				DefaultTableModel model = (DefaultTableModel)(table.getModel());
+				int numberOfRows = model.getRowCount();
+				for (int i = 0; i < numberOfRows; ++i) { model.removeRow(0); }
+			}
+		});
+		add(submitButton);
 		
-		test = new JTextArea("TABLE WITH QUERIED DATA (TODO!)");
-		test.setFont(new Font("Chalkduster", Font.PLAIN, 35));
-		test.setForeground(Color.DARK_GRAY);
-		test.setLineWrap(true);
-		test.setWrapStyleWord(true);
-		test.setBounds(20, 225, 1240, 445);
-		add(test);
+		table = new JTable(new DefaultTableModel(new Object[]{"Category", "Quantity", "Place"}, 0));
+		table.setRowHeight(50);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setPreferredSize(new Dimension(1200, 75));
+		table.getTableHeader().setFont(new Font("Serif", Font.BOLD, 25));
+		table.setFont(new Font("Serif", Font.PLAIN, 20));
+		
+		scrollPane = new JScrollPane(table);
+		scrollPane.setBounds(40, 200, 1200, 450);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		add(scrollPane);
 	}
 	
-	public void actionPerformed(ActionEvent e) {
-		String selectedCategory = categoryDropdown.getSelectedItem().toString();
-		String searchQuery = searchBox.getText();
-		System.out.println("Search Query: " + selectedCategory + ", " + searchQuery);
+	private void traverseTableData() {
+		DefaultTableModel model = (DefaultTableModel)(table.getModel());
+		for (int row = 0; row < model.getRowCount(); ++row) {
+			for (int col = 0; col < model.getColumnCount(); ++col) {
+				System.out.print(model.getValueAt(row, col) + ", ");
+			}
+			System.out.println();
+		}
 	}
 }	// end of class BuyerPortal
