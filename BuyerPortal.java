@@ -8,7 +8,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
+import javax.swing.JComboBox;
 import javax.swing.JTable;
+import javax.swing.DefaultCellEditor;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.Color;
@@ -23,9 +25,8 @@ public class BuyerPortal extends JPanel {
 	
 	private JLabel titleLabel;
 	private JButton backButton, addEquipmentButton, submitButton;
-	private JTable table;
-	private JScrollPane scrollPane;
-	// private JComboBox<String> categoryDropdown;
+	private JTable dataTable;
+	private JScrollPane scrollPaneForTable;
 	
 	public BuyerPortal() {
 		setLayout(null);
@@ -52,22 +53,14 @@ public class BuyerPortal extends JPanel {
 		titleLabel.setBounds(140, 20, 1000, 75);
 		add(titleLabel);
 		
-		/*
-		categoryDropdown = new JComboBox<String>(CATEGORIES);
-		categoryDropdown.setFont(new Font("Chalkduster", Font.PLAIN, 15));
-		categoryDropdown.setForeground(Color.DARK_GRAY);
-		categoryDropdown.setBounds(20, 125, 250, 50);
-		add(categoryDropdown);
-		*/
-		
 		addEquipmentButton = new JButton("+ ADD NEW EQUIPMENT");
 		addEquipmentButton.setFont(new Font("Chalkduster", Font.PLAIN, 30));
 		addEquipmentButton.setForeground(Color.DARK_GRAY);
 		addEquipmentButton.setBounds(150, 125, 425, 65);
 		addEquipmentButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DefaultTableModel model = (DefaultTableModel)(table.getModel());
-				model.addRow(new Object[]{"New Category", "New Quantity", "New Place"});
+				DefaultTableModel model = (DefaultTableModel)(dataTable.getModel());
+				model.addRow(new Object[]{"Click to Select Category", "Enter Quantity", "Enter Place"});
 			}
 		});
 		add(addEquipmentButton);
@@ -80,31 +73,33 @@ public class BuyerPortal extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				traverseTableData();
 				// TODO: Submit the requests!
-				DefaultTableModel model = (DefaultTableModel)(table.getModel());
+				DefaultTableModel model = (DefaultTableModel)(dataTable.getModel());
 				int numberOfRows = model.getRowCount();
 				for (int i = 0; i < numberOfRows; ++i) { model.removeRow(0); }
 			}
 		});
 		add(submitButton);
 		
-		table = new JTable(new DefaultTableModel(new Object[]{"Category", "Quantity", "Place"}, 0));
-		table.setRowHeight(50);
-		table.getTableHeader().setReorderingAllowed(false);
-		table.getTableHeader().setPreferredSize(new Dimension(1200, 75));
-		table.getTableHeader().setFont(new Font("Serif", Font.BOLD, 25));
-		table.setFont(new Font("Serif", Font.PLAIN, 20));
+		dataTable = new JTable(new DefaultTableModel(new Object[]{"Category", "Quantity", "Place"}, 0));
+		dataTable.setRowHeight(50);
+		dataTable.getTableHeader().setReorderingAllowed(false);
+		dataTable.getTableHeader().setPreferredSize(new Dimension(1200, 75));
+		dataTable.getTableHeader().setFont(new Font("Serif", Font.BOLD, 25));
+		dataTable.setFont(new Font("Serif", Font.PLAIN, 20));
+		dataTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JComboBox<String>(CATEGORIES)));
 		
-		scrollPane = new JScrollPane(table);
-		scrollPane.setBounds(40, 200, 1200, 450);
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		add(scrollPane);
+		scrollPaneForTable = new JScrollPane(dataTable);
+		scrollPaneForTable.setBounds(40, 200, 1200, 450);
+		scrollPaneForTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		add(scrollPaneForTable);
 	}
 	
 	private void traverseTableData() {
-		DefaultTableModel model = (DefaultTableModel)(table.getModel());
+		DefaultTableModel model = (DefaultTableModel)(dataTable.getModel());
 		for (int row = 0; row < model.getRowCount(); ++row) {
 			for (int col = 0; col < model.getColumnCount(); ++col) {
-				System.out.print(model.getValueAt(row, col) + ", ");
+				String val = (String)(model.getValueAt(row, col));
+				System.out.print(val + ", ");
 			}
 			System.out.println();
 		}
