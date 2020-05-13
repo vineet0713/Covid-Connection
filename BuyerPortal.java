@@ -21,7 +21,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class BuyerPortal extends JPanel {
-	private String[] COLUMNS = {"Category", "Quantity", "Location"};
+	private String[] REQUEST_COLUMNS = {"Category", "Quantity", "Location"};
+	private String[] RESPONSE_COLUMNS = {"Category", "Quantity", "Location", "Price", "Supplier"};
 	private String[] NEW_ROW = {"Click to Select Category", "Enter Quantity", "Click to Select Location"};
 	private String[] CATEGORIES = {"Masks", "Ventilators", "Pills", "Wheelchairs"};
 	private String[] LOCATIONS = {"Cupertino", "Santa Clara", "Mountain View", "San Francisco"};
@@ -83,7 +84,7 @@ public class BuyerPortal extends JPanel {
 		});
 		add(submitButton);
 		
-		addEquipmentTable = new JTable(new DefaultTableModel(COLUMNS, 0));
+		addEquipmentTable = new JTable(new DefaultTableModel(REQUEST_COLUMNS, 0));
 		addEquipmentTable.setRowHeight(40);
 		addEquipmentTable.getTableHeader().setReorderingAllowed(false);
 		addEquipmentTable.getTableHeader().setPreferredSize(new Dimension(600, 75));
@@ -102,7 +103,7 @@ public class BuyerPortal extends JPanel {
 		requestsLabel.setBounds(660, 125, 600, 45);
 		add(requestsLabel);
 		
-		requestFeedTable = new JTable(new DefaultTableModel(COLUMNS, 0) {
+		requestFeedTable = new JTable(new DefaultTableModel(REQUEST_COLUMNS, 0) {
 			public boolean isCellEditable(int row, int column) { return false; }
 		});
 		requestFeedTable.setRowHeight(40);
@@ -121,7 +122,7 @@ public class BuyerPortal extends JPanel {
 		requestsLabel.setBounds(660, 420, 600, 45);
 		add(requestsLabel);
 		
-		responseFeedTable = new JTable(new DefaultTableModel(COLUMNS, 0) {
+		responseFeedTable = new JTable(new DefaultTableModel(RESPONSE_COLUMNS, 0) {
 			public boolean isCellEditable(int row, int column) { return false; }
 		});
 		responseFeedTable.setRowHeight(40);
@@ -146,7 +147,7 @@ public class BuyerPortal extends JPanel {
 		}
 		DefaultTableModel responseModel = (DefaultTableModel)(responseFeedTable.getModel());
 		for (int i = 0; i < 5; ++i) {
-			responseModel.addRow(new Object[]{"Sample Category", "Sample Quantity", "Sample Location"});
+			responseModel.addRow(new Object[]{"Sample Category", "Sample Quantity", "Sample Location", "Sample Price", "Sample Supplier"});
 		}
 	}
 	
