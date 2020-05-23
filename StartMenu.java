@@ -100,6 +100,11 @@ public class StartMenu extends JPanel implements ActionListener {
 		}
 		DataStore.getInstance().setCurrentUser(username);
 		timer.stop();
+		if (userType.equals("buyer")) {
+			(CovidConnection.bp).loadAllData();
+		} else if (userType.equals("supplier")) {
+			(CovidConnection.sp).loadAllData();
+		}
 		(CovidConnection.cards).show(CovidConnection.topPanel, e.getActionCommand());
 	}
 	

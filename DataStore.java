@@ -65,6 +65,17 @@ public class DataStore {
 	public HashSet<String> getSubscriptionsForCurrentUser() {
 		return supplierToSubscriptions.get(currentUser);
 	}
+	public boolean subscriptionExistsForCurrentUser(String subscription) {
+		return supplierToSubscriptions.get(currentUser).contains(subscription);
+	}
+	public void addSubscriptionForCurrentUser(String subscription) {
+		supplierToSubscriptions.get(currentUser).add(subscription);
+		writer.writeToPersonFile("suppliers.txt", generateSupplierFileData());
+	}
+	public void removeSubscriptionForCurrentUser(String subscription) {
+		supplierToSubscriptions.get(currentUser).remove(subscription);
+		writer.writeToPersonFile("suppliers.txt", generateSupplierFileData());
+	}
 	/*
 	public String toString() {
 		StringBuilder s = new StringBuilder();

@@ -33,7 +33,6 @@ public class PlaintextReader {
 	}
 	private void parseSupplierSubscriptions(String line) {
 		String[] supplierData = line.split(";", 2);
-		DataStore.getInstance().addAccount(supplierData[0], "supplier", false);
 		HashSet<String> subscriptions = (supplierData[1].isEmpty())
 										? new HashSet<String>()
 										: new HashSet<String>(Arrays.asList(supplierData[1].split(",")));

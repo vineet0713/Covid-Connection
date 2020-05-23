@@ -137,12 +137,18 @@ public class SupplierPortal extends JPanel {
 		reloadButton.setBounds(1160, 20, 100, 50);
 		reloadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				loadSubscriptions();
+				DataStore.getInstance().readAllFileData();
+				loadAllData();
 			}
 		});
 		add(reloadButton);
 		
 		addDummyData();
+	}
+	
+	public void loadAllData() {
+		loadSubscriptions();
+		loadNotifications();
 	}
 	
 	private void loadSubscriptions() {
@@ -154,11 +160,20 @@ public class SupplierPortal extends JPanel {
 		}
 	}
 	
+	private void loadNotifications() {
+		// TODO
+	}
+	
 	private void addSubscription(String category) {
 		if (category.equals(subscriptionsDropdown.getItemAt(0))) {
 			JOptionPane.showMessageDialog(null, "Please select a category.", null, JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		if (DataStore.getInstance().subscriptionExistsForCurrentUser(category)) {
+			JOptionPane.showMessageDialog(null, "You've already subscribed to this category.", null, JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		DataStore.getInstance().addSubscriptionForCurrentUser(category);
 		((DefaultTableModel)subscriptionsTable.getModel()).addRow(new String[]{category});
 		subscriptionsDropdown.setSelectedIndex(0);
 	}
@@ -168,6 +183,11 @@ public class SupplierPortal extends JPanel {
 			JOptionPane.showMessageDialog(null, "Please select a category.", null, JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		if (!DataStore.getInstance().subscriptionExistsForCurrentUser(category)) {
+			JOptionPane.showMessageDialog(null, "You haven't subscribed to this category.", null, JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		DataStore.getInstance().removeSubscriptionForCurrentUser(category);
 		DefaultTableModel model = (DefaultTableModel)(subscriptionsTable.getModel());
 		for (int row = 0; row < model.getRowCount(); ++row) {
 			if (((String)(model.getValueAt(row, 0))).equals(category)) {

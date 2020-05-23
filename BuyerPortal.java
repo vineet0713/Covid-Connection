@@ -28,7 +28,7 @@ public class BuyerPortal extends JPanel {
 	private String[] LOCATIONS = {"Cupertino", "Santa Clara", "Mountain View", "San Francisco"};
 	
 	private JLabel titleLabel, requestsLabel, responsesLabel;
-	private JButton backButton, addEquipmentButton, submitButton;
+	private JButton backButton, addEquipmentButton, submitButton, reloadButton;
 	private JTable addEquipmentTable, requestFeedTable, responseFeedTable;
 	private JScrollPane scrollPaneForEquipmentTable, scrollPaneForRequestTable, scrollPaneForResponseTable;
 	
@@ -136,7 +136,22 @@ public class BuyerPortal extends JPanel {
 		scrollPaneForResponseTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		add(scrollPaneForResponseTable);
 		
+		reloadButton = new JButton("RELOAD");
+		reloadButton.setFont(new Font("Herculanum", Font.PLAIN, 20));
+		reloadButton.setBounds(1160, 20, 100, 50);
+		reloadButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DataStore.getInstance().readAllFileData();
+				loadAllData();
+			}
+		});
+		add(reloadButton);
+		
 		addDummyData();
+	}
+	
+	public void loadAllData() {
+		// TODO
 	}
 	
 	// TEMPORARY METHOD TO ADD DUMMY DATA TO 2 TABLES
