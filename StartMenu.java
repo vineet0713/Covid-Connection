@@ -66,11 +66,6 @@ public class StartMenu extends JPanel implements ActionListener {
 		resetTimer();
 	}	// end of constructor
 	
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		
-	}	// end of public void paintComponent
-	
 	// based on which button was clicked, switches the JPanel:
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();

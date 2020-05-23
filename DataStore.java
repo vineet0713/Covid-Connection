@@ -4,19 +4,21 @@
 // This class is a Singleton that stores all of the application data.
 
 import java.util.HashSet;
+import java.util.HashMap;
 
 public class DataStore {
 	private static DataStore singleInstance = null;
 	private PlaintextReader reader;
 	private PlaintextWriter writer;
 	private String currentUser;
-	private HashSet<String> buyers, suppliers;
+	private HashSet<String> buyers;
+	private HashMap<String, HashSet<String>> supplierToSubscriptions;
 	private DataStore() {
 		reader = new PlaintextReader();
 		writer = new PlaintextWriter();
 		currentUser = null;
 		buyers = new HashSet<String>();
-		suppliers = new HashSet<String>();
+		supplierToSubscriptions = new HashMap<String, HashSet<String>>();
 	}
 	public static DataStore getInstance() {
 		if (singleInstance == null) { singleInstance = new DataStore(); }
@@ -30,29 +32,52 @@ public class DataStore {
 	public void setCurrentUser(String newUser) { currentUser = newUser; }
 	public boolean accountExists(String username, String userType) {
 		if (userType.equals("buyer")) { return buyers.contains(username); }
-		else if (userType.equals("supplier")) { return suppliers.contains(username); }
+		else if (userType.equals("supplier")) { return supplierToSubscriptions.containsKey(username); }
 		else { return false; }
 	}
 	public void addAccount(String username, String userType, boolean writeToFile) {
-		StringBuilder output = new StringBuilder();
 		if (userType.equals("buyer")) {
 			buyers.add(username);
 			if (!writeToFile) { return; }
+			StringBuilder output = new StringBuilder();
 			for (String buyerName : buyers) { output.append(buyerName + "\n"); }
 			writer.writeToPersonFile("buyers.txt", output.toString());
 		} else if (userType.equals("supplier")) {
-			suppliers.add(username);
+			supplierToSubscriptions.put(username, new HashSet<String>());
 			if (!writeToFile) { return; }
-			for (String supplierName : suppliers) { output.append(supplierName + "\n"); }
-			writer.writeToPersonFile("suppliers.txt", output.toString());
+			writer.writeToPersonFile("suppliers.txt", generateSupplierFileData());
 		}
 	}
+	private String generateSupplierFileData() {
+		StringBuilder output = new StringBuilder();
+		for (String supplierName : supplierToSubscriptions.keySet()) {
+			output.append(supplierName + ";");
+			for (String subscription : supplierToSubscriptions.get(supplierName)) {
+				if (!subscription.isEmpty()) { output.append(subscription + ","); }
+			}
+			output.append("\n");
+		}
+		return output.toString();
+	}
+	public void addSubscriptionsForSupplier(String supplier, HashSet<String> subscriptions) {
+		supplierToSubscriptions.put(supplier, subscriptions);
+	}
+	public HashSet<String> getSubscriptionsForCurrentUser() {
+		return supplierToSubscriptions.get(currentUser);
+	}
+	/*
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		s.append("Buyers:\n");
 		for (String buyerName : buyers) { s.append("\t" + buyerName + ",\n"); }
 		s.append("Suppliers:\n");
-		for (String supplierName : suppliers) { s.append("\t" + supplierName + ",\n"); }
+		for (String supplierName : supplierToSubscriptions.keySet()) {
+			s.append("\t" + supplierName + ":");
+			for (String subscription : supplierToSubscriptions.get(supplierName)) {
+				s.append(subscription + ",");
+			}
+		}
 		return s.toString();
 	}
+	*/
 }

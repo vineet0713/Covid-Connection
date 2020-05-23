@@ -26,11 +26,11 @@ import java.awt.event.ActionEvent;
 public class SupplierPortal extends JPanel {
 	// NOTE: We could centralize this String array! (since it's also being used in BuyerPortal)
 	private String[] CATEGORIES = {"[SELECT CATEGORY]", "Masks", "Ventilators", "Pills", "Wheelchairs"};
-	private String[] RESPONSES = {"[SELECT RESPONSE]", "Accept", "Deny"};
+	private String[] RESPONSES = {"No Response Yet", "Accept", "Deny"};
 	
 	private JLabel title, manageSubscriptionsLabel;
 	private JComboBox subscriptionsDropdown;
-	private JButton back, addSubscriptionButton, removeSubscriptionButton, submitButton;
+	private JButton back, addSubscriptionButton, removeSubscriptionButton, submitButton, reloadButton;
 	private JTable subscriptionsTable, notificationsTable;
 	private JScrollPane scrollPaneForSubscriptionsTable, scrollPaneForNotificationsTable;
 	
@@ -101,12 +101,12 @@ public class SupplierPortal extends JPanel {
 		subscriptionsTable.setFont(new Font("Serif", Font.PLAIN, 25));
 		
 		scrollPaneForSubscriptionsTable = new JScrollPane(subscriptionsTable);
-		scrollPaneForSubscriptionsTable.setBounds(20, 225, 600, 455);
+		scrollPaneForSubscriptionsTable.setBounds(20, 225, 500, 455);
 		scrollPaneForSubscriptionsTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		add(scrollPaneForSubscriptionsTable);
 		
-		notificationsTable = new JTable(new DefaultTableModel(new String[]{"My Notifications", "Response"}, 0) {
-			public boolean isCellEditable(int row, int column) { return (column == 1); }
+		notificationsTable = new JTable(new DefaultTableModel(new String[]{"My Notifications", "Set Price", "Response"}, 0) {
+			public boolean isCellEditable(int row, int column) { return (column > 0); }
 		});
 		notificationsTable.setRowHeight(40);
 		notificationsTable.getTableHeader().setReorderingAllowed(false);
@@ -114,17 +114,17 @@ public class SupplierPortal extends JPanel {
 		notificationsTable.getTableHeader().setFont(new Font("Serif", Font.BOLD, 30));
 		((DefaultTableCellRenderer)notificationsTable.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		notificationsTable.setFont(new Font("Serif", Font.PLAIN, 15));
-		notificationsTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JComboBox<String>(RESPONSES)));
+		notificationsTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JComboBox<String>(RESPONSES)));
 		
 		scrollPaneForNotificationsTable = new JScrollPane(notificationsTable);
-		scrollPaneForNotificationsTable.setBounds(660, 225, 600, 375);
+		scrollPaneForNotificationsTable.setBounds(560, 225, 700, 375);
 		scrollPaneForNotificationsTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		add(scrollPaneForNotificationsTable);
 		
 		submitButton = new JButton("SUBMIT ALL RESPONSES");
 		submitButton.setFont(new Font("Chalkduster", Font.PLAIN, 30));
 		submitButton.setForeground(Color.DARK_GRAY);
-		submitButton.setBounds(750, 615, 410, 65);
+		submitButton.setBounds(700, 615, 410, 65);
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				submitResponses();
@@ -132,7 +132,26 @@ public class SupplierPortal extends JPanel {
 		});
 		add(submitButton);
 		
+		reloadButton = new JButton("RELOAD");
+		reloadButton.setFont(new Font("Herculanum", Font.PLAIN, 20));
+		reloadButton.setBounds(1160, 20, 100, 50);
+		reloadButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadSubscriptions();
+			}
+		});
+		add(reloadButton);
+		
 		addDummyData();
+	}
+	
+	private void loadSubscriptions() {
+		DefaultTableModel subscriptionsTableModel = (DefaultTableModel)(subscriptionsTable.getModel());
+		int numberOfRows = subscriptionsTableModel.getRowCount();
+		for (int i = 0; i < numberOfRows; ++i) { subscriptionsTableModel.removeRow(0); }
+		for (String subscription : DataStore.getInstance().getSubscriptionsForCurrentUser()) {
+			subscriptionsTableModel.addRow(new String[]{subscription});
+		}
 	}
 	
 	private void addSubscription(String category) {
@@ -179,13 +198,15 @@ public class SupplierPortal extends JPanel {
 	
 	// TEMPORARY METHOD TO ADD DUMMY DATA TO 2 TABLES
 	private void addDummyData() {
+		/*
 		DefaultTableModel subscriptionsTableModel = (DefaultTableModel)(subscriptionsTable.getModel());
 		subscriptionsTableModel.addRow(new String[]{"Ventilators"});
 		subscriptionsTableModel.addRow(new String[]{"Wheelchairs"});
+		*/
 		
 		DefaultTableModel notificationsTableModel = (DefaultTableModel)(notificationsTable.getModel());
-		notificationsTableModel.addRow(new String[]{"Wheelchair from buyer2"});
-		notificationsTableModel.addRow(new String[]{"Ventilator from buyer1"});
-		notificationsTableModel.addRow(new String[]{"Wheelchair from buyer5"});
+		notificationsTableModel.addRow(new String[]{"15 Wheelchairs in Mountain View", "340.49", "Click to Select Response"});
+		notificationsTableModel.addRow(new String[]{"2 Ventilators in Sunnyvale", "1309.99", "Click to Select Response"});
+		notificationsTableModel.addRow(new String[]{"29 Wheelchairs in San Francisco", "259.97", "Click to Select Response"});
 	}
 }	// end of class SupplierPortal

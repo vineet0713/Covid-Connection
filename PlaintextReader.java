@@ -13,6 +13,8 @@ import java.io.BufferedReader;
 
 // import java.util.Date;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Arrays;
 
 public class PlaintextReader {
 	public void parsePersonFile(String filename, String type) {
@@ -20,10 +22,22 @@ public class PlaintextReader {
 			String line;
 			while ((line = br.readLine()) != null) {
 				if (line.length() == 0) { continue; }
-				DataStore.getInstance().addAccount(line, type, false);
+				if (type.equals("buyer")) {
+					DataStore.getInstance().addAccount(line, "buyer", false);
+				} else if (type.equals("supplier")) {
+					parseSupplierSubscriptions(line);
+				}
 			}
 			br.close();
 		} catch (Exception e) { return; }
+	}
+	private void parseSupplierSubscriptions(String line) {
+		String[] supplierData = line.split(";", 2);
+		DataStore.getInstance().addAccount(supplierData[0], "supplier", false);
+		HashSet<String> subscriptions = (supplierData[1].isEmpty())
+										? new HashSet<String>()
+										: new HashSet<String>(Arrays.asList(supplierData[1].split(",")));
+		DataStore.getInstance().addSubscriptionsForSupplier(supplierData[0], subscriptions);
 	}
 	// Keep this method for parsing Equipment and Message data!
 	private ArrayList<String> parseLine(String line, char separator) {
