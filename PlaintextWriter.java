@@ -9,7 +9,7 @@ import java.io.BufferedWriter;
 // import java.text.SimpleDateFormat;
 
 public class PlaintextWriter {
-	public void writeToPersonFile(String filename, String output) {
+	public void writeToFile(String filename, String output) {
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filename)))) {
 			bw.write(output);
 			bw.close();

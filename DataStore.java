@@ -13,23 +13,37 @@ public class DataStore {
 	private String currentUser;
 	private HashSet<String> buyers;
 	private HashMap<String, HashSet<String>> supplierToSubscriptions;
+	private HashSet<Item> items;
 	private DataStore() {
 		reader = new PlaintextReader();
 		writer = new PlaintextWriter();
 		currentUser = null;
 		buyers = new HashSet<String>();
 		supplierToSubscriptions = new HashMap<String, HashSet<String>>();
+		items = new HashSet<Item>();
 	}
+	
 	public static DataStore getInstance() {
 		if (singleInstance == null) { singleInstance = new DataStore(); }
 		return singleInstance;
 	}
-	public void readAllFileData() {
-		reader.parsePersonFile("buyers.txt", "buyer");
-		reader.parsePersonFile("suppliers.txt", "supplier");
+	
+	public void readBuyerData() {
+		buyers.clear();
+		reader.parseFile("buyers.txt", "buyer");
 	}
+	public void readSupplierData() {
+		supplierToSubscriptions.clear();
+		reader.parseFile("suppliers.txt", "supplier");
+	}
+	public void readItemData() {
+		items.clear();
+		reader.parseFile("items.txt", "item");
+	}
+	
 	public String getCurrentUser() { return currentUser; }
 	public void setCurrentUser(String newUser) { currentUser = newUser; }
+	
 	public boolean accountExists(String username, String userType) {
 		if (userType.equals("buyer")) { return buyers.contains(username); }
 		else if (userType.equals("supplier")) { return supplierToSubscriptions.containsKey(username); }
@@ -41,11 +55,11 @@ public class DataStore {
 			if (!writeToFile) { return; }
 			StringBuilder output = new StringBuilder();
 			for (String buyerName : buyers) { output.append(buyerName + "\n"); }
-			writer.writeToPersonFile("buyers.txt", output.toString());
+			writer.writeToFile("buyers.txt", output.toString());
 		} else if (userType.equals("supplier")) {
 			supplierToSubscriptions.put(username, new HashSet<String>());
 			if (!writeToFile) { return; }
-			writer.writeToPersonFile("suppliers.txt", generateSupplierFileData());
+			writer.writeToFile("suppliers.txt", generateSupplierFileData());
 		}
 	}
 	private String generateSupplierFileData() {
@@ -59,6 +73,7 @@ public class DataStore {
 		}
 		return output.toString();
 	}
+	
 	public void addSubscriptionsForSupplier(String supplier, HashSet<String> subscriptions) {
 		supplierToSubscriptions.put(supplier, subscriptions);
 	}
@@ -70,25 +85,43 @@ public class DataStore {
 	}
 	public void addSubscriptionForCurrentUser(String subscription) {
 		supplierToSubscriptions.get(currentUser).add(subscription);
-		writer.writeToPersonFile("suppliers.txt", generateSupplierFileData());
+		writer.writeToFile("suppliers.txt", generateSupplierFileData());
 	}
 	public void removeSubscriptionForCurrentUser(String subscription) {
 		supplierToSubscriptions.get(currentUser).remove(subscription);
-		writer.writeToPersonFile("suppliers.txt", generateSupplierFileData());
+		writer.writeToFile("suppliers.txt", generateSupplierFileData());
 	}
-	/*
-	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("Buyers:\n");
-		for (String buyerName : buyers) { s.append("\t" + buyerName + ",\n"); }
-		s.append("Suppliers:\n");
-		for (String supplierName : supplierToSubscriptions.keySet()) {
-			s.append("\t" + supplierName + ":");
-			for (String subscription : supplierToSubscriptions.get(supplierName)) {
-				s.append(subscription + ",");
+	
+	public int getNextItemId() {
+		int maxId = -1;
+		for (Item item : items) { maxId = Math.max(maxId, item.getId()); }
+		return maxId + 1;
+	}
+	public HashSet<Item> getItemsForCurrentBuyer() {
+		HashSet<Item> buyerItems = new HashSet<Item>();
+		for (Item item : items) {
+			if (item.getBuyer().equals(currentUser)) { buyerItems.add(item); }
+		}
+		return buyerItems;
+	}
+	public HashSet<Item> getItemsForCurrentSupplier() {
+		HashSet<Item> supplierItems = new HashSet<Item>();
+		for (Item item : items) {
+			if (item.getSupplier() != null) { continue; }
+			if (subscriptionExistsForCurrentUser(item.getCategory())) {
+				supplierItems.add(item);
 			}
 		}
-		return s.toString();
+		return supplierItems;
 	}
-	*/
+	public void addItem(Item item) { items.add(item); }
+	public void addItems(HashSet<Item> newItems) {
+		items.addAll(newItems);
+		writer.writeToFile("items.txt", generateItemFileData());
+	}
+	private String generateItemFileData() {
+		StringBuilder output = new StringBuilder();
+		for (Item item : items) { output.append(item + "\n"); }
+		return output.toString();
+	}
 }

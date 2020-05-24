@@ -1,0 +1,9 @@
+1;buyer3;Pills;14;Mountain View;
+2;buyer1;Ventilators;2;Cupertino;supplier4;374.99;Accept;
+3;buyer1;Pills;30;Cupertino;
+4;buyer3;Masks;304;San Francisco;supplier7;43.99;Accept;
+5;buyer1;Ventilators;5;Mountain View;supplier7;423.99;Deny;
+6;buyer1;Wheelchairs;31;Santa Clara;supplier3;1804.31;Accept;
+7;buyer1;Pills;35;Santa Clara;
+8;buyer1;Wheelchairs;12;San Francisco;supplier7;459.42;Accept;
+9;buyer1;Masks;1330;Cupertino;supplier7;110.44;Accept;

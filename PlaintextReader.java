@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Arrays;
 
 public class PlaintextReader {
-	public void parsePersonFile(String filename, String type) {
+	public void parseFile(String filename, String type) {
 		try (BufferedReader br = new BufferedReader(new FileReader(new File(filename)))) {
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -26,11 +26,14 @@ public class PlaintextReader {
 					DataStore.getInstance().addAccount(line, "buyer", false);
 				} else if (type.equals("supplier")) {
 					parseSupplierSubscriptions(line);
+				} else if (type.equals("item")) {
+					parseItemLine(line);
 				}
 			}
 			br.close();
 		} catch (Exception e) { return; }
 	}
+	
 	private void parseSupplierSubscriptions(String line) {
 		String[] supplierData = line.split(";", 2);
 		HashSet<String> subscriptions = (supplierData[1].isEmpty())
@@ -38,20 +41,20 @@ public class PlaintextReader {
 										: new HashSet<String>(Arrays.asList(supplierData[1].split(",")));
 		DataStore.getInstance().addSubscriptionsForSupplier(supplierData[0], subscriptions);
 	}
-	// Keep this method for parsing Equipment and Message data!
-	private ArrayList<String> parseLine(String line, char separator) {
-		ArrayList<String> entry = new ArrayList<String>();
-		StringBuilder currentString = new StringBuilder();
-		for (int i = 0; i < line.length(); ++i) {
-			char c = line.charAt(i);
-			if (c == separator) {
-				entry.add(currentString.toString());
-				currentString = new StringBuilder();
-				continue;
-			}
-			currentString.append(c);
+	
+	private void parseItemLine(String line) {
+		String[] itemData = line.split(";");
+		int id, quantity;
+		try { id = Integer.parseInt(itemData[0]); } catch (Exception e) { id = -1; }
+		try { quantity = Integer.parseInt(itemData[3]); } catch (Exception e) { quantity = -1; }
+		Item parsedItem;
+		if (itemData.length == 5) {
+			parsedItem = new Item(id, itemData[1], itemData[2], quantity, itemData[4]);
+		} else {
+			double supplierPrice;
+			try { supplierPrice = Double.parseDouble(itemData[6]); } catch (Exception e) { supplierPrice = -1; }
+			parsedItem = new Item(id, itemData[1], itemData[2], quantity, itemData[4], itemData[5], supplierPrice, itemData[7]);
 		}
-		entry.add(currentString.toString());
-		return entry;
+		DataStore.getInstance().addItem(parsedItem);
 	}
 }

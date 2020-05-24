@@ -4,6 +4,7 @@
 // This JPanel displays the supplier portal of the application 'Covid Connection'.
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
@@ -19,20 +20,25 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Dimension;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
+import java.lang.Exception;
 
 public class SupplierPortal extends JPanel {
 	// NOTE: We could centralize this String array! (since it's also being used in BuyerPortal)
 	private String[] CATEGORIES = {"[SELECT CATEGORY]", "Masks", "Ventilators", "Pills", "Wheelchairs"};
 	private String[] RESPONSES = {"No Response Yet", "Accept", "Deny"};
+	private String[] SUBSCRIPTION_COLUMNS = {"My Subscriptions"};
+	private String[] NOTIFICATION_COLUMNS = {"My Notifications", "Price", "Response"};
 	
 	private JLabel title, manageSubscriptionsLabel;
 	private JComboBox subscriptionsDropdown;
 	private JButton back, addSubscriptionButton, removeSubscriptionButton, submitButton, reloadButton;
 	private JTable subscriptionsTable, notificationsTable;
 	private JScrollPane scrollPaneForSubscriptionsTable, scrollPaneForNotificationsTable;
+	
+	private ArrayList<Item> notificationItems;
 	
 	public SupplierPortal() {
 		setLayout(null);
@@ -90,7 +96,7 @@ public class SupplierPortal extends JPanel {
 		});
 		add(removeSubscriptionButton);
 		
-		subscriptionsTable = new JTable(new DefaultTableModel(new String[]{"My Subscriptions"}, 0) {
+		subscriptionsTable = new JTable(new DefaultTableModel(SUBSCRIPTION_COLUMNS, 0) {
 			public boolean isCellEditable(int row, int column) { return false; }
 		});
 		subscriptionsTable.setRowHeight(40);
@@ -105,7 +111,7 @@ public class SupplierPortal extends JPanel {
 		scrollPaneForSubscriptionsTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		add(scrollPaneForSubscriptionsTable);
 		
-		notificationsTable = new JTable(new DefaultTableModel(new String[]{"My Notifications", "Set Price", "Response"}, 0) {
+		notificationsTable = new JTable(new DefaultTableModel(NOTIFICATION_COLUMNS, 0) {
 			public boolean isCellEditable(int row, int column) { return (column > 0); }
 		});
 		notificationsTable.setRowHeight(40);
@@ -137,13 +143,14 @@ public class SupplierPortal extends JPanel {
 		reloadButton.setBounds(1160, 20, 100, 50);
 		reloadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DataStore.getInstance().readAllFileData();
+				DataStore.getInstance().readSupplierData();
+				DataStore.getInstance().readItemData();
 				loadAllData();
 			}
 		});
 		add(reloadButton);
 		
-		addDummyData();
+		notificationItems = new ArrayList<Item>();
 	}
 	
 	public void loadAllData() {
@@ -161,7 +168,15 @@ public class SupplierPortal extends JPanel {
 	}
 	
 	private void loadNotifications() {
-		// TODO
+		notificationItems.clear();
+		DefaultTableModel notificationsTableModel = (DefaultTableModel)(notificationsTable.getModel());
+		int numberOfRows = notificationsTableModel.getRowCount();
+		for (int i = 0; i < numberOfRows; ++i) { notificationsTableModel.removeRow(0); }
+		for (Item item : DataStore.getInstance().getItemsForCurrentSupplier()) {
+			String notification = item.getQuantity() + " " + item.getCategory() + " in " + item.getLocation();
+			notificationsTableModel.addRow(new String[]{notification, "Enter Price", "Click to Select Response"});
+			notificationItems.add(item);
+		}
 	}
 	
 	private void addSubscription(String category) {
@@ -176,6 +191,7 @@ public class SupplierPortal extends JPanel {
 		DataStore.getInstance().addSubscriptionForCurrentUser(category);
 		((DefaultTableModel)subscriptionsTable.getModel()).addRow(new String[]{category});
 		subscriptionsDropdown.setSelectedIndex(0);
+		loadNotifications();
 	}
 	
 	private void removeSubscription(String category) {
@@ -196,37 +212,44 @@ public class SupplierPortal extends JPanel {
 			}
 		}
 		subscriptionsDropdown.setSelectedIndex(0);
+		loadNotifications();
 	}
 	
 	private void submitResponses() {
 		DefaultTableModel model = (DefaultTableModel)(notificationsTable.getModel());
 		ArrayList<Integer> rowsToRemove = new ArrayList<Integer>();
+		HashSet<Item> itemsToSubmit = new HashSet<Item>();
 		for (int row = 0; row < model.getRowCount(); ++row) {
-			String response = (String)(model.getValueAt(row, 1));
-			if (response.equals("Accept")) {
-				// TODO: Send response of 'Accept'
-				rowsToRemove.add(new Integer(row));
-			} else if (response.equals("Deny")) {
-				// TODO: Send response of 'Deny'
-				rowsToRemove.add(new Integer(row));
+			String userResponse = (String)(model.getValueAt(row, 2));
+			if (!userResponse.equals("Accept") && !userResponse.equals("Deny")) {
+				continue;
 			}
+			String userPrice = (String)(model.getValueAt(row, 1));
+			double price = validatePrice(userPrice, -1.0);
+			if (price == -1.0) {
+				JOptionPane.showMessageDialog(null, "Your input on row " + (row + 1) + " is invalid.", null, JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			Item currentItem = notificationItems.get(row);
+			currentItem.setSupplier(DataStore.getInstance().getCurrentUser());
+			currentItem.setSupplierPrice(price);
+			currentItem.setSupplierResponse(userResponse);
+			itemsToSubmit.add(currentItem);
+			rowsToRemove.add(new Integer(row));
 		}
+		DataStore.getInstance().addItems(itemsToSubmit);
 		for (int i = 0; i < rowsToRemove.size(); ++i) {
-			model.removeRow(rowsToRemove.get(i).intValue() - i);
+			int indexToRemove = rowsToRemove.get(i).intValue() - i;
+			model.removeRow(indexToRemove);
+			notificationItems.remove(indexToRemove);
 		}
+		loadNotifications();
 	}
 	
-	// TEMPORARY METHOD TO ADD DUMMY DATA TO 2 TABLES
-	private void addDummyData() {
-		/*
-		DefaultTableModel subscriptionsTableModel = (DefaultTableModel)(subscriptionsTable.getModel());
-		subscriptionsTableModel.addRow(new String[]{"Ventilators"});
-		subscriptionsTableModel.addRow(new String[]{"Wheelchairs"});
-		*/
-		
-		DefaultTableModel notificationsTableModel = (DefaultTableModel)(notificationsTable.getModel());
-		notificationsTableModel.addRow(new String[]{"15 Wheelchairs in Mountain View", "340.49", "Click to Select Response"});
-		notificationsTableModel.addRow(new String[]{"2 Ventilators in Sunnyvale", "1309.99", "Click to Select Response"});
-		notificationsTableModel.addRow(new String[]{"29 Wheelchairs in San Francisco", "259.97", "Click to Select Response"});
+	private double validatePrice(String userInput, double invalidValue) {
+		try {
+			double quantity = Double.parseDouble(userInput);
+			return (quantity > 0) ? quantity : invalidValue;
+		} catch (Exception e) { return invalidValue; }
 	}
 }	// end of class SupplierPortal

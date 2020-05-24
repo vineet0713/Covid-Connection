@@ -16,9 +16,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Dimension;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
+import java.util.HashSet;
+
+import java.lang.Exception;
 
 public class BuyerPortal extends JPanel {
 	private String[] REQUEST_COLUMNS = {"Category", "Quantity", "Location"};
@@ -75,11 +78,7 @@ public class BuyerPortal extends JPanel {
 		submitButton.setBounds(120, 615, 400, 65);
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				traverseTableData();
-				// TODO: Submit the requests!
-				DefaultTableModel model = (DefaultTableModel)(addEquipmentTable.getModel());
-				int numberOfRows = model.getRowCount();
-				for (int i = 0; i < numberOfRows; ++i) { model.removeRow(0); }
+				submitEquipmentData();
 			}
 		});
 		add(submitButton);
@@ -141,39 +140,58 @@ public class BuyerPortal extends JPanel {
 		reloadButton.setBounds(1160, 20, 100, 50);
 		reloadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DataStore.getInstance().readAllFileData();
+				DataStore.getInstance().readBuyerData();
+				DataStore.getInstance().readItemData();
 				loadAllData();
 			}
 		});
 		add(reloadButton);
-		
-		addDummyData();
 	}
 	
 	public void loadAllData() {
-		// TODO
-	}
-	
-	// TEMPORARY METHOD TO ADD DUMMY DATA TO 2 TABLES
-	private void addDummyData() {
 		DefaultTableModel requestModel = (DefaultTableModel)(requestFeedTable.getModel());
-		for (int i = 0; i < 10; ++i) {
-			requestModel.addRow(new Object[]{"Sample Category", "Sample Quantity", "Sample Location"});
-		}
+		int requestRows = requestModel.getRowCount();
+		for (int i = 0; i < requestRows; ++i) { requestModel.removeRow(0); }
 		DefaultTableModel responseModel = (DefaultTableModel)(responseFeedTable.getModel());
-		for (int i = 0; i < 5; ++i) {
-			responseModel.addRow(new Object[]{"Sample Category", "Sample Quantity", "Sample Location", "Sample Price", "Sample Supplier"});
+		int responseRows = responseModel.getRowCount();
+		for (int i = 0; i < responseRows; ++i) { responseModel.removeRow(0); }
+		HashSet<Item> items = DataStore.getInstance().getItemsForCurrentBuyer();
+		for (Item item : items) {
+			if (item.getSupplier() == null) {
+				requestModel.addRow(new Object[]{item.getCategory(), item.getQuantity(), item.getLocation()});
+			} else if (item.getSupplierResponse().equals("Accept")) {
+				responseModel.addRow(new Object[]{item.getCategory(), item.getQuantity(), item.getLocation(), item.getSupplierPrice(), item.getSupplier()});
+			}
 		}
 	}
 	
-	private void traverseTableData() {
+	private void submitEquipmentData() {
 		DefaultTableModel model = (DefaultTableModel)(addEquipmentTable.getModel());
-		for (int row = 0; row < model.getRowCount(); ++row) {
-			for (int col = 0; col < model.getColumnCount(); ++col) {
-				String val = (String)(model.getValueAt(row, col));
-				System.out.print(val + ", ");
+		HashSet<Item> itemsToSubmit = new HashSet<Item>();
+		int nextItemId = DataStore.getInstance().getNextItemId();
+		String currentUser = DataStore.getInstance().getCurrentUser();
+		int numberOfRows = model.getRowCount();
+		for (int row = 0; row < numberOfRows; ++row) {
+			String category = (String)(model.getValueAt(row, 0));
+			String userQuantity = (String)(model.getValueAt(row, 1));
+			int quantity = validateQuantity(userQuantity, -1);
+			String location = (String)(model.getValueAt(row, 2));
+			if (category.startsWith("Click") || quantity == -1 || location.startsWith("Click")) {
+				JOptionPane.showMessageDialog(null, "Your input on row " + (row + 1) + " is invalid.", null, JOptionPane.ERROR_MESSAGE);
+				return;
 			}
-			System.out.println();
+			itemsToSubmit.add(new Item(nextItemId, currentUser, category, quantity, location));
+			++nextItemId;
 		}
+		DataStore.getInstance().addItems(itemsToSubmit);
+		for (int i = 0; i < numberOfRows; ++i) { model.removeRow(0); }
+		loadAllData();
+	}
+	
+	private int validateQuantity(String userInput, int invalidValue) {
+		try {
+			int quantity = Integer.parseInt(userInput);
+			return (quantity > 0) ? quantity : invalidValue;
+		} catch (Exception e) { return invalidValue; }
 	}
 }	// end of class BuyerPortal
