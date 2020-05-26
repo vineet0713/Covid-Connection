@@ -7,3 +7,6 @@
 7;buyer1;Pills;35;Santa Clara;
 8;buyer1;Wheelchairs;12;San Francisco;supplier7;459.42;Accept;
 9;buyer1;Masks;1330;Cupertino;supplier7;110.44;Accept;
+10;buyer2;Ventilators;4;San Francisco;
+11;buyer2;Wheelchairs;31;Mountain View;
+12;buyer5;Pills;230;Santa Clara;

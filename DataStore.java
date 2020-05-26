@@ -1,6 +1,6 @@
 // Swetha Valluru, Vineet Joshi
 // Professor Rani Mikkilineni
-// SupplierPortal.java
+// DataStore.java
 // This class is a Singleton that stores all of the application data.
 
 import java.util.HashSet;
@@ -8,20 +8,21 @@ import java.util.HashMap;
 
 public class DataStore {
 	private static DataStore singleInstance = null;
-	private PlaintextReader reader;
-	private PlaintextWriter writer;
+	private Parser parser;
 	private String currentUser;
 	private HashSet<String> buyers;
 	private HashMap<String, HashSet<String>> supplierToSubscriptions;
 	private HashSet<Item> items;
 	private DataStore() {
-		reader = new PlaintextReader();
-		writer = new PlaintextWriter();
 		currentUser = null;
 		buyers = new HashSet<String>();
 		supplierToSubscriptions = new HashMap<String, HashSet<String>>();
 		items = new HashSet<Item>();
 	}
+	public void setParser(Parser parser) { this.parser = parser; }
+	public HashSet<String> getBuyers() { return buyers; }
+	public HashMap<String, HashSet<String>> getSupplierToSubscriptions() { return supplierToSubscriptions; }
+	public HashSet<Item> getItems() { return items; }
 	
 	public static DataStore getInstance() {
 		if (singleInstance == null) { singleInstance = new DataStore(); }
@@ -30,15 +31,15 @@ public class DataStore {
 	
 	public void readBuyerData() {
 		buyers.clear();
-		reader.parseFile("buyers.txt", "buyer");
+		parser.readFile("buyer");
 	}
 	public void readSupplierData() {
 		supplierToSubscriptions.clear();
-		reader.parseFile("suppliers.txt", "supplier");
+		parser.readFile("supplier");
 	}
 	public void readItemData() {
 		items.clear();
-		reader.parseFile("items.txt", "item");
+		parser.readFile("item");
 	}
 	
 	public String getCurrentUser() { return currentUser; }
@@ -50,28 +51,14 @@ public class DataStore {
 		else { return false; }
 	}
 	public void addAccount(String username, String userType, boolean writeToFile) {
+		if (!userType.equals("buyer") && !userType.equals("supplier")) { return; }
 		if (userType.equals("buyer")) {
 			buyers.add(username);
-			if (!writeToFile) { return; }
-			StringBuilder output = new StringBuilder();
-			for (String buyerName : buyers) { output.append(buyerName + "\n"); }
-			writer.writeToFile("buyers.txt", output.toString());
 		} else if (userType.equals("supplier")) {
 			supplierToSubscriptions.put(username, new HashSet<String>());
-			if (!writeToFile) { return; }
-			writer.writeToFile("suppliers.txt", generateSupplierFileData());
 		}
-	}
-	private String generateSupplierFileData() {
-		StringBuilder output = new StringBuilder();
-		for (String supplierName : supplierToSubscriptions.keySet()) {
-			output.append(supplierName + ";");
-			for (String subscription : supplierToSubscriptions.get(supplierName)) {
-				if (!subscription.isEmpty()) { output.append(subscription + ","); }
-			}
-			output.append("\n");
-		}
-		return output.toString();
+		if (!writeToFile) { return; }
+		parser.writeFile(userType);
 	}
 	
 	public void addSubscriptionsForSupplier(String supplier, HashSet<String> subscriptions) {
@@ -85,11 +72,11 @@ public class DataStore {
 	}
 	public void addSubscriptionForCurrentUser(String subscription) {
 		supplierToSubscriptions.get(currentUser).add(subscription);
-		writer.writeToFile("suppliers.txt", generateSupplierFileData());
+		parser.writeFile("supplier");
 	}
 	public void removeSubscriptionForCurrentUser(String subscription) {
 		supplierToSubscriptions.get(currentUser).remove(subscription);
-		writer.writeToFile("suppliers.txt", generateSupplierFileData());
+		parser.writeFile("supplier");
 	}
 	
 	public int getNextItemId() {
@@ -117,11 +104,6 @@ public class DataStore {
 	public void addItem(Item item) { items.add(item); }
 	public void addItems(HashSet<Item> newItems) {
 		items.addAll(newItems);
-		writer.writeToFile("items.txt", generateItemFileData());
-	}
-	private String generateItemFileData() {
-		StringBuilder output = new StringBuilder();
-		for (Item item : items) { output.append(item + "\n"); }
-		return output.toString();
+		parser.writeFile("item");
 	}
 }
