@@ -157,10 +157,13 @@ public class BuyerPortal extends JPanel {
 		for (int i = 0; i < responseRows; ++i) { responseModel.removeRow(0); }
 		HashSet<Item> items = DataStore.getInstance().getItemsForCurrentBuyer();
 		for (Item item : items) {
-			if (item.getSupplier() == null) {
+			if (!item.responsesExist()) {
 				requestModel.addRow(new Object[]{item.getCategory(), item.getQuantity(), item.getLocation()});
-			} else if (item.getSupplierResponse().equals("Accept")) {
-				responseModel.addRow(new Object[]{item.getCategory(), item.getQuantity(), item.getLocation(), item.getSupplierPrice(), item.getSupplier()});
+				continue;
+			}
+			for (SupplierResponse response : item.getResponses()) {
+				if (!response.getResponse().equals("Accept")) { continue; }
+				responseModel.addRow(new Object[]{item.getCategory(), item.getQuantity(), item.getLocation(), response.getPrice(), response.getName()});
 			}
 		}
 	}

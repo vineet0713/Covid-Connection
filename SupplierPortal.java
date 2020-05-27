@@ -219,6 +219,7 @@ public class SupplierPortal extends JPanel {
 		DefaultTableModel model = (DefaultTableModel)(notificationsTable.getModel());
 		ArrayList<Integer> rowsToRemove = new ArrayList<Integer>();
 		HashSet<Item> itemsToSubmit = new HashSet<Item>();
+		String currentUser = DataStore.getInstance().getCurrentUser();
 		for (int row = 0; row < model.getRowCount(); ++row) {
 			String userResponse = (String)(model.getValueAt(row, 2));
 			if (!userResponse.equals("Accept") && !userResponse.equals("Deny")) {
@@ -231,9 +232,7 @@ public class SupplierPortal extends JPanel {
 				return;
 			}
 			Item currentItem = notificationItems.get(row);
-			currentItem.setSupplier(DataStore.getInstance().getCurrentUser());
-			currentItem.setSupplierPrice(price);
-			currentItem.setSupplierResponse(userResponse);
+			currentItem.addResponse(new SupplierResponse(currentUser, price, userResponse));
 			itemsToSubmit.add(currentItem);
 			rowsToRemove.add(new Integer(row));
 		}

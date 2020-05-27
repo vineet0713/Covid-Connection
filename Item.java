@@ -3,38 +3,42 @@
 // Item.java
 // This class represents an item in the application 'Covid Connection'.
 
+import java.util.HashSet;
+
 public class Item {
 	private int id, quantity;
-	private String buyer, category, location, supplier, supplierResponse;
-	private double supplierPrice;
+	private String buyer, category, location;
+	private HashSet<SupplierResponse> responses;
 	public Item(int id, String buyer, String category, int quantity, String location) {
 		this.id = id;
 		this.buyer = buyer;
 		this.category = category;
 		this.quantity = quantity;
 		this.location = location;
+		this.responses = new HashSet<SupplierResponse>();
 	}
-	public Item(int id, String buyer, String category, int quantity, String location, String supplier, double supplierPrice, String supplierResponse) {
+	public Item(int id, String buyer, String category, int quantity, String location, HashSet<SupplierResponse> responses) {
 		this.id = id;
 		this.buyer = buyer;
 		this.category = category;
 		this.quantity = quantity;
 		this.location = location;
-		this.supplier = supplier;
-		this.supplierPrice = supplierPrice;
-		this.supplierResponse = supplierResponse;
+		this.responses = responses;
 	}
 	public int getId() { return id; }
 	public String getBuyer() { return buyer; }
 	public String getCategory() { return category; }
 	public int getQuantity() { return quantity; }
 	public String getLocation() { return location; }
-	public String getSupplier() { return supplier; }
-	public double getSupplierPrice() { return supplierPrice; }
-	public String getSupplierResponse() { return supplierResponse; }
-	public void setSupplier(String supplier) { this.supplier = supplier; }
-	public void setSupplierPrice(double supplierPrice) { this.supplierPrice = supplierPrice; }
-	public void setSupplierResponse(String supplierResponse) { this.supplierResponse = supplierResponse; }
+	public HashSet<SupplierResponse> getResponses() { return responses; }
+	public void addResponse(SupplierResponse response) { responses.add(response); }
+	public boolean responsesExist() { return !responses.isEmpty(); }
+	public boolean supplierHasResponse(String supplierName) {
+		for (SupplierResponse response : responses) {
+			if (response.getName().equals(supplierName)) { return true; }
+		}
+		return false;
+	}
 	public boolean equals(Object obj) {
 		if (this == obj) { return true; }
 		if (obj == null) { return false; }
@@ -50,11 +54,7 @@ public class Item {
 		s.append(category + ";");
 		s.append(quantity + ";");
 		s.append(location + ";");
-		if (supplier != null) {
-			s.append(supplier + ";");
-			s.append(supplierPrice + ";");
-			s.append(supplierResponse + ";");
-		}
+		for (SupplierResponse response : responses) { s.append(response); }
 		return s.toString();
 	}
 }

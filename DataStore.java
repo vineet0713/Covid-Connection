@@ -94,8 +94,7 @@ public class DataStore {
 	public HashSet<Item> getItemsForCurrentSupplier() {
 		HashSet<Item> supplierItems = new HashSet<Item>();
 		for (Item item : items) {
-			if (item.getSupplier() != null) { continue; }
-			if (subscriptionExistsForCurrentUser(item.getCategory())) {
+			if (subscriptionExistsForCurrentUser(item.getCategory()) && !item.supplierHasResponse(currentUser)) {
 				supplierItems.add(item);
 			}
 		}

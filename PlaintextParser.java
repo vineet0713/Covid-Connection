@@ -55,15 +55,15 @@ public class PlaintextParser implements Parser {
 		int id, quantity;
 		try { id = Integer.parseInt(itemData[0]); } catch (Exception e) { id = -1; }
 		try { quantity = Integer.parseInt(itemData[3]); } catch (Exception e) { quantity = -1; }
-		Item parsedItem;
-		if (itemData.length == 5) {
-			parsedItem = new Item(id, itemData[1], itemData[2], quantity, itemData[4]);
-		} else {
-			double supplierPrice;
-			try { supplierPrice = Double.parseDouble(itemData[6]); } catch (Exception e) { supplierPrice = -1; }
-			parsedItem = new Item(id, itemData[1], itemData[2], quantity, itemData[4], itemData[5], supplierPrice, itemData[7]);
+		HashSet<SupplierResponse> responses = new HashSet<SupplierResponse>();
+		int index = 5;
+		while (index < itemData.length) {
+			double price;
+			try { price = Double.parseDouble(itemData[index + 1]); } catch (Exception e) { price = -1; }
+			responses.add(new SupplierResponse(itemData[index], price, itemData[index + 2]));
+			index += 3;
 		}
-		DataStore.getInstance().addItem(parsedItem);
+		DataStore.getInstance().addItem(new Item(id, itemData[1], itemData[2], quantity, itemData[4], responses));
 	}
 	
 	// Helper functions for the writeFile method:

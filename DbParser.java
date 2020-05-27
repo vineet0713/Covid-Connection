@@ -95,8 +95,9 @@ public class DbParser implements Parser {
 					double supplierPrice = rs.getDouble("supplier_quote");
 					String response = rs.getString("supplier_response");
 					System.out.println(supplierName + "   " + requestCategory);
-					parsedItem = new Item(id, buyerName, requestCategory, quantity, location, supplierName,
-							supplierPrice, response);
+					// TODO: Change this to support multiple supplier responses for an item!
+					// parsedItem = new Item(id, buyerName, requestCategory, quantity, location, supplierName, supplierPrice, response);
+					parsedItem = new Item(id, buyerName, requestCategory, quantity, location);	// temporary
 					DataStore.getInstance().addItem(parsedItem);
 				}
 				rs.close();
