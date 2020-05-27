@@ -44,7 +44,7 @@ public class SupplierPortal extends JPanel {
 		setLayout(null);
 		setBackground(Color.WHITE);
 		
-		back = new JButton("← BACK");
+		back = new JButton("BACK");
 		back.setFont(new Font("Herculanum", Font.PLAIN, 20));
 		back.setBounds(20, 20, 100, 50);
 		back.addActionListener(new ActionListener() {

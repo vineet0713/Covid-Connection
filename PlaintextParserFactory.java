@@ -6,7 +6,14 @@
 import java.util.HashMap;
 
 public class PlaintextParserFactory implements ParserFactory {
-	public Parser createParser(HashMap<String, String> typeToFilename) {
-		return new PlaintextParser(typeToFilename);
-	}
+
+	  private static final PlaintextParserFactory instance = new PlaintextParserFactory();
+
+	  public static PlaintextParserFactory getInstance() {
+	    return instance;
+	  }
+	  
+		public Parser createParser(HashMap<String, String> typeToFilename) {
+			return new PlaintextParser(typeToFilename);
+		}
 }

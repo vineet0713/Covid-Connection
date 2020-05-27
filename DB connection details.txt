@@ -1,0 +1,3 @@
+url1 = "jdbc:mysql://localhost:3306/covidconnection";
+user = "root";
+password = "MySQL@Password!";

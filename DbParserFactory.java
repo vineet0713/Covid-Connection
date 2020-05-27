@@ -5,13 +5,13 @@
 
 import java.util.HashMap;
 
-public class XmlParserFactory implements ParserFactory {
-	private static final XmlParserFactory instance = new XmlParserFactory();
+public class DbParserFactory implements ParserFactory {
+	private static final DbParserFactory instance = new DbParserFactory();
 
-	  public static XmlParserFactory getInstance() {
+	  public static DbParserFactory getInstance() {
 	    return instance;
 	  }
 	public Parser createParser(HashMap<String, String> typeToFilename) {
-		return new XmlParser(typeToFilename);
+		return new DbParser(typeToFilename);
 	}
 }

@@ -39,7 +39,7 @@ public class BuyerPortal extends JPanel {
 		setLayout(null);
 		setBackground(Color.WHITE);
 		
-		backButton = new JButton("← BACK");
+		backButton = new JButton("BACK");
 		backButton.setFont(new Font("Herculanum", Font.PLAIN, 20));
 		backButton.setBounds(20, 20, 100, 50);
 		backButton.addActionListener(new ActionListener() {
