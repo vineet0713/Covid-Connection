@@ -52,8 +52,8 @@ public class SupplierPortal extends JPanel {
 				String message = "Are you sure you want to exit the Supplier Portal and go back to the main menu?";
 				int n = JOptionPane.showConfirmDialog(null, message, "Confirm Exit", JOptionPane.YES_NO_OPTION);
 				if (n == JOptionPane.YES_OPTION) {
-					(CovidConnection.cards).show(CovidConnection.topPanel, "Start Menu");
-					(CovidConnection.sm).resetTimer();
+					(Gui.cards).show(Gui.topPanel, "Start Menu"); // CovidConnection is changed to Gui
+					(Gui.sm).resetTimer(); // CovidConnection is changed to Gui
 				}
 			}
 		});

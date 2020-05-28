@@ -101,11 +101,11 @@ public class StartMenu extends JPanel implements ActionListener {
 		DataStore.getInstance().setCurrentUser(username);
 		timer.stop();
 		if (userType.equals("buyer")) {
-			(CovidConnection.bp).loadAllData();
+			(Gui.bp).loadAllData();
 		} else if (userType.equals("supplier")) {
-			(CovidConnection.sp).loadAllData();
+			(Gui.sp).loadAllData();
 		}
-		(CovidConnection.cards).show(CovidConnection.topPanel, e.getActionCommand());
+		(Gui.cards).show(Gui.topPanel, e.getActionCommand());
 	}
 	
 	// resets the animation Timer:

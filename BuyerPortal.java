@@ -47,8 +47,8 @@ public class BuyerPortal extends JPanel {
 				String message = "Are you sure you want to exit the Buyer Portal and go back to the main menu?";
 				int n = JOptionPane.showConfirmDialog(null, message, "Confirm Exit", JOptionPane.YES_NO_OPTION);
 				if (n == JOptionPane.YES_OPTION) {
-					(Gui.cards).show(Gui.topPanel, "Start Menu");
-					(Gui.sm).resetTimer();
+					(Gui.cards).show(Gui.topPanel, "Start Menu"); // CovidConnection is changed to Gui
+					(Gui.sm).resetTimer();// CovidConnection is changed to Gui
 				}
 			}
 		});
