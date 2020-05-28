@@ -6,5 +6,5 @@
 import java.util.HashMap;
 
 public interface ParserFactory {
-	public abstract Parser createParser(HashMap<String, String> typeToFilename);
+	public Parser createParser(HashMap<String, String> typeToFilename);
 }

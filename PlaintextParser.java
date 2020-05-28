@@ -28,16 +28,18 @@ public class PlaintextParser implements Parser {
 				if (line.length() == 0) { continue; }
 				if (type.equals("buyer")) { DataStore.getInstance().addAccount(line, "buyer", false); }
 				else if (type.equals("supplier")) { parseSupplierSubscriptions(line); }
-				else if (type.equals("item")) { parseItemLine(line); }
+				else { parseItemLine(line); }
 			}
 			br.close();
 		} catch (Exception e) { return; }
 	}
 	public void writeFile(String type) {
+		FileDataGenerator generator;
+		if (type.equals("buyer")) { generator = new BuyerFileDataGenerator(); }
+		else if (type.equals("supplier")) { generator = new SupplierFileDataGenerator(); }
+		else { generator = new ItemFileDataGenerator(); }
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File(typeToFilename.get(type))))) {
-			if (type.equals("buyer")) { bw.write(generateBuyerFileData()); }
-			else if (type.equals("supplier")) { bw.write(generateSupplierFileData()); }
-			else if (type.equals("item")) { bw.write(generateItemFileData()); }
+			bw.write(generator.generate());
 			bw.close();
 		} catch (Exception e) { return; }
 	}
@@ -64,31 +66,5 @@ public class PlaintextParser implements Parser {
 			index += 3;
 		}
 		DataStore.getInstance().addItem(new Item(id, itemData[1], itemData[2], quantity, itemData[4], responses));
-	}
-	
-	// Helper functions for the writeFile method:
-	private String generateBuyerFileData() {
-		StringBuilder output = new StringBuilder();
-		HashSet<String> buyers = DataStore.getInstance().getBuyers();
-		for (String buyerName : buyers) { output.append(buyerName + "\n"); }
-		return output.toString();
-	}
-	private String generateSupplierFileData() {
-		StringBuilder output = new StringBuilder();
-		HashMap<String, HashSet<String>> supplierToSubscriptions = DataStore.getInstance().getSupplierToSubscriptions();
-		for (String supplierName : supplierToSubscriptions.keySet()) {
-			output.append(supplierName + ";");
-			for (String subscription : supplierToSubscriptions.get(supplierName)) {
-				if (!subscription.isEmpty()) { output.append(subscription + ","); }
-			}
-			output.append("\n");
-		}
-		return output.toString();
-	}
-	private String generateItemFileData() {
-		StringBuilder output = new StringBuilder();
-		HashSet<Item> items = DataStore.getInstance().getItems();
-		for (Item item : items) { output.append(item + "\n"); }
-		return output.toString();
 	}
 }
