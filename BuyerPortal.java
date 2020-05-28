@@ -47,8 +47,8 @@ public class BuyerPortal extends JPanel {
 				String message = "Are you sure you want to exit the Buyer Portal and go back to the main menu?";
 				int n = JOptionPane.showConfirmDialog(null, message, "Confirm Exit", JOptionPane.YES_NO_OPTION);
 				if (n == JOptionPane.YES_OPTION) {
-					(CovidConnection.cards).show(CovidConnection.topPanel, "Start Menu");
-					(CovidConnection.sm).resetTimer();
+					(Gui.cards).show(Gui.topPanel, "Start Menu");
+					(Gui.sm).resetTimer();
 				}
 			}
 		});
@@ -157,10 +157,10 @@ public class BuyerPortal extends JPanel {
 		for (int i = 0; i < responseRows; ++i) { responseModel.removeRow(0); }
 		HashSet<Item> items = DataStore.getInstance().getItemsForCurrentBuyer();
 		for (Item item : items) {
-			if (!item.responsesExist()) {
+			//if (!item.responsesExist()) {
 				requestModel.addRow(new Object[]{item.getCategory(), item.getQuantity(), item.getLocation()});
-				continue;
-			}
+				//continue;
+			//}
 			for (SupplierResponse response : item.getResponses()) {
 				if (!response.getResponse().equals("Accept")) { continue; }
 				responseModel.addRow(new Object[]{item.getCategory(), item.getQuantity(), item.getLocation(), response.getPrice(), response.getName()});
@@ -183,7 +183,13 @@ public class BuyerPortal extends JPanel {
 				JOptionPane.showMessageDialog(null, "Your input on row " + (row + 1) + " is invalid.", null, JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			itemsToSubmit.add(new Item(nextItemId, currentUser, category, quantity, location));
+			//itemsToSubmit.add(new Item(nextItemId, currentUser, category, quantity, location));
+			itemsToSubmit.add(Item.builder()
+						 .id(nextItemId)
+						 .buyer(currentUser)
+						 .category(category)
+						 .quantity(quantity)
+						 .location(location).build());
 			++nextItemId;
 		}
 		DataStore.getInstance().addItems(itemsToSubmit);

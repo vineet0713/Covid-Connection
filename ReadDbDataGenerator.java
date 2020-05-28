@@ -120,11 +120,26 @@ public class ReadDbDataGenerator implements DBDataGenerator {
 					// supplierName, supplierPrice, response);
 					if (supplierName != null) {
 						responses.add(new SupplierResponse(supplierName, supplierPrice, response));
-						parsedItem = new Item(id, buyerName, requestCategory, quantity, location, responses);
+						//parsedItem = new Item(id, buyerName, requestCategory, quantity, location, responses);
+						parsedItem = Item.builder()
+										.id(id)
+										.buyer(buyerName)
+										.category(requestCategory)
+										.quantity(quantity)
+										.location(location)
+										.responses(responses)
+										.build();
 						System.out.println(id + " , " + buyerName + " , " + requestCategory + " , " + quantity + " , "
 								+ location + " , " + supplierName + " , " + supplierPrice + " , " + response);
 					} else {
-						parsedItem = new Item(id, buyerName, requestCategory, quantity, location);
+						//parsedItem = new Item(id, buyerName, requestCategory, quantity, location);
+						parsedItem = Item.builder()
+								.id(id)
+								.buyer(buyerName)
+								.category(requestCategory)
+								.quantity(quantity)
+								.location(location)
+								.build();
 						System.out.println(
 								id + " , " + buyerName + " , " + requestCategory + " , " + quantity + " , " + location);
 					}
