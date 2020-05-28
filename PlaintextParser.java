@@ -35,9 +35,9 @@ public class PlaintextParser implements Parser {
 	}
 	public void writeFile(String type) {
 		FileDataGenerator generator;
-		if (type.equals("buyer")) { generator = new BuyerFileDataGenerator(); }
-		else if (type.equals("supplier")) { generator = new SupplierFileDataGenerator(); }
-		else { generator = new ItemFileDataGenerator(); }
+		if (type.equals("buyer")) { generator = BuyerFileDataGenerator.getInstance(); }
+		else if (type.equals("supplier")) { generator = SupplierFileDataGenerator.getInstance(); }
+		else { generator = ItemFileDataGenerator.getInstance(); }
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File(typeToFilename.get(type))))) {
 			bw.write(generator.generate());
 			bw.close();

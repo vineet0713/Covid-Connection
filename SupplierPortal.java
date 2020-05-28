@@ -173,7 +173,7 @@ public class SupplierPortal extends JPanel {
 		int numberOfRows = notificationsTableModel.getRowCount();
 		for (int i = 0; i < numberOfRows; ++i) { notificationsTableModel.removeRow(0); }
 		for (Item item : DataStore.getInstance().getItemsForCurrentSupplier()) {
-			String notification = item.getQuantity() + " " + item.getCategory() + " in " + item.getLocation();
+			String notification =item.getBuyer()+" wants "+ item.getQuantity() + " " + item.getCategory() + " in " + item.getLocation();
 			notificationsTableModel.addRow(new String[]{notification, "Enter Price", "Click to Select Response"});
 			notificationItems.add(item);
 		}

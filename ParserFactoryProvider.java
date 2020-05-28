@@ -4,8 +4,6 @@ public class ParserFactoryProvider {
     switch (fileType) {
       case "plaintext":
         return PlaintextParserFactory.getInstance();
-      case "xml":
-        return XmlParserFactory.getInstance();
       case "db":
         return DbParserFactory.getInstance();
       default:

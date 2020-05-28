@@ -7,13 +7,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class SupplierFileDataGenerator implements FileDataGenerator {
+
+	private static final SupplierFileDataGenerator instance = new SupplierFileDataGenerator();
+
+	public static SupplierFileDataGenerator getInstance() {
+		return instance;
+	}
+
 	public String generate() {
 		StringBuilder output = new StringBuilder();
 		HashMap<String, HashSet<String>> supplierToSubscriptions = DataStore.getInstance().getSupplierToSubscriptions();
 		for (String supplierName : supplierToSubscriptions.keySet()) {
 			output.append(supplierName + ";");
 			for (String subscription : supplierToSubscriptions.get(supplierName)) {
-				if (!subscription.isEmpty()) { output.append(subscription + ","); }
+				if (!subscription.isEmpty()) {
+					output.append(subscription + ",");
+				}
 			}
 			output.append("\n");
 		}

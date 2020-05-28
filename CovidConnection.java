@@ -30,7 +30,7 @@ public class CovidConnection {
 
 	public void run() {
 		try {
-			readConfiguration("configuration.txt");
+			readConfiguration("C:/Users/sweth/eclipse-workspace/CovidConnection/src/configuration.txt");
 		} catch (Exception e) {
 			System.out.println("Invalid configuration.");
 			return;
@@ -74,14 +74,9 @@ public class CovidConnection {
 			//factory provider provides difference concrete factory instances
 			parserFactory = ParserFactoryProvider.getFactory(fileType);
 			if (fileType.equals("plaintext")) {
-				typeToFilename.put("buyer", "buyers.txt");
-				typeToFilename.put("supplier", "suppliers.txt");
-				typeToFilename.put("item", "items.txt");
-				break;
-			} else if (fileType.equals("xml")) {
-				typeToFilename.put("buyer", "[INSERT XML FILENAME]");
-				typeToFilename.put("supplier", "[INSERT XML FILENAME]");
-				typeToFilename.put("item", "[INSERT XML FILENAME]");
+				typeToFilename.put("buyer", "C:/Users/sweth/eclipse-workspace/CovidConnection/src/buyers.txt");
+				typeToFilename.put("supplier", "C:/Users/sweth/eclipse-workspace/CovidConnection/src/suppliers.txt");
+				typeToFilename.put("item", "C:/Users/sweth/eclipse-workspace/CovidConnection/src/items.txt");
 				break;
 			} else if (fileType.contentEquals("db")) {
 				break;
