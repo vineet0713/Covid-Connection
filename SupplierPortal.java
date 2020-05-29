@@ -107,7 +107,7 @@ public class SupplierPortal extends JPanel {
 		subscriptionsTable.setFont(new Font("Serif", Font.PLAIN, 25));
 		
 		scrollPaneForSubscriptionsTable = new JScrollPane(subscriptionsTable);
-		scrollPaneForSubscriptionsTable.setBounds(20, 225, 500, 455);
+		scrollPaneForSubscriptionsTable.setBounds(20, 225, 400, 455);
 		scrollPaneForSubscriptionsTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		add(scrollPaneForSubscriptionsTable);
 		
@@ -120,17 +120,21 @@ public class SupplierPortal extends JPanel {
 		notificationsTable.getTableHeader().setFont(new Font("Serif", Font.BOLD, 30));
 		((DefaultTableCellRenderer)notificationsTable.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		notificationsTable.setFont(new Font("Serif", Font.PLAIN, 15));
+		notificationsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		notificationsTable.getColumnModel().getColumn(0).setPreferredWidth(350);
+		notificationsTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+		notificationsTable.getColumnModel().getColumn(2).setPreferredWidth(280);
 		notificationsTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JComboBox<String>(RESPONSES)));
 		
 		scrollPaneForNotificationsTable = new JScrollPane(notificationsTable);
-		scrollPaneForNotificationsTable.setBounds(560, 225, 700, 375);
+		scrollPaneForNotificationsTable.setBounds(460, 225, 800, 375);
 		scrollPaneForNotificationsTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		add(scrollPaneForNotificationsTable);
 		
 		submitButton = new JButton("SUBMIT ALL RESPONSES");
 		submitButton.setFont(new Font("Chalkduster", Font.PLAIN, 30));
 		submitButton.setForeground(Color.DARK_GRAY);
-		submitButton.setBounds(700, 615, 410, 65);
+		submitButton.setBounds(650, 615, 410, 65);
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				submitResponses();
@@ -173,7 +177,7 @@ public class SupplierPortal extends JPanel {
 		int numberOfRows = notificationsTableModel.getRowCount();
 		for (int i = 0; i < numberOfRows; ++i) { notificationsTableModel.removeRow(0); }
 		for (Item item : DataStore.getInstance().getItemsForCurrentSupplier()) {
-			String notification =item.getBuyer()+" wants "+ item.getQuantity() + " " + item.getCategory() + " in " + item.getLocation();
+			String notification = item.getBuyer() + " wants " + item.getQuantity() + " " + item.getCategory() + " in " + item.getLocation();
 			notificationsTableModel.addRow(new String[]{notification, "Enter Price", "Click to Select Response"});
 			notificationItems.add(item);
 		}

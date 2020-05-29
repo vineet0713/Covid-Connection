@@ -1,2 +1,2 @@
 // In the line below, type either 'plaintext' or 'db':
-db
+plaintext
