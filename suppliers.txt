@@ -1,4 +1,4 @@
 supplier3;Ventilators,Pills,Wheelchairs,
 supplier1;Ventilators,
-supplier7;Ventilators,Wheelchairs,Masks,
+supplier7;Ventilators,Pills,Wheelchairs,Masks,
 supplier4;Ventilators,

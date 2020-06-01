@@ -6,10 +6,8 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 public class DbParser implements Parser {
-	private HashMap<String, String> typeToFilename;
 	Connection connection = null;
 	String url1 = "jdbc:mysql://localhost:3306/covidconnection";
 	String user = "root";
@@ -17,9 +15,7 @@ public class DbParser implements Parser {
 	DBDataGenerator generator ;
 
 
-	public DbParser(HashMap<String, String> typeToFilename2) {
-		// TODO Auto-generated constructor stub
-		this.typeToFilename = typeToFilename;
+	public DbParser() {
 		connectDB();
 	}
 

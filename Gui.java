@@ -14,8 +14,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
-import java.util.HashMap;
-
 public class Gui {
 	public static StartMenu sm;
 	public static BuyerPortal bp;
@@ -56,32 +54,21 @@ public class Gui {
 
 	private void readConfiguration(String filename) throws Exception {
 		ParserFactory parserFactory = null;
-		HashMap<String, String> typeToFilename = new HashMap<String, String>();
 		BufferedReader br = new BufferedReader(new FileReader(new File(filename)));
 		String line;
-		// Get data handler factory
-
 		while ((line = br.readLine()) != null) {
 			if (line.startsWith("//")) {
 				continue;
 			}
 			String fileType = line.toLowerCase();
-			// factory provider provides difference concrete factory instances
-			parserFactory = ParserFactoryProvider.getFactory(fileType);
-			if (fileType.equals("plaintext")) {
-				typeToFilename.put("buyer", "buyers.txt");
-				typeToFilename.put("supplier", "suppliers.txt");
-				typeToFilename.put("item", "items.txt");
-				break;
-			} else if (fileType.contentEquals("db")) {
-				break;
-			} else {
+			if (!fileType.equals("plaintext") && !fileType.contentEquals("db")) {
 				throw new Exception();
 			}
-
+			// factory provider provides difference concrete factory instances
+			parserFactory = ParserFactoryProvider.getFactory(fileType);
+			break;
 		}
 		br.close();
-		DataStore.getInstance().setParser(parserFactory.createParser(typeToFilename));
+		DataStore.getInstance().setParser(parserFactory.createParser());
 	}
-
 }

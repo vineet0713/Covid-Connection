@@ -13,18 +13,12 @@ import java.io.BufferedWriter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.HashMap;
 import java.util.Arrays;
 
 public class PlaintextParser implements Parser {
-	private HashMap<String, String> typeToFilename;
-
-	public PlaintextParser(HashMap<String, String> typeToFilename) {
-		this.typeToFilename = typeToFilename;
-	}
-
 	public void readFile(String type) {
-		try (BufferedReader br = new BufferedReader(new FileReader(new File(typeToFilename.get(type))))) {
+		String filename = type + "s.txt";
+		try (BufferedReader br = new BufferedReader(new FileReader(new File(filename)))) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				if (line.length() == 0) {
@@ -53,7 +47,8 @@ public class PlaintextParser implements Parser {
 		} else {
 			generator = ItemFileDataGenerator.getInstance();
 		}
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File(typeToFilename.get(type))))) {
+		String filename = type + "s.txt";
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filename)))) {
 			bw.write(generator.generate());
 			bw.close();
 		} catch (Exception e) {
@@ -64,8 +59,9 @@ public class PlaintextParser implements Parser {
 	// Helper functions for the readFile method:
 	private void parseSupplierSubscriptions(String line) {
 		String[] supplierData = line.split(";", 2);
-		HashSet<String> subscriptions = (supplierData[1].isEmpty()) ? new HashSet<String>()
-				: new HashSet<String>(Arrays.asList(supplierData[1].split(",")));
+		HashSet<String> subscriptions = (supplierData[1].isEmpty())
+								? new HashSet<String>()
+								: new HashSet<String>(Arrays.asList(supplierData[1].split(",")));
 		DataStore.getInstance().addSubscriptionsForSupplier(supplierData[0], subscriptions);
 	}
 
@@ -94,7 +90,6 @@ public class PlaintextParser implements Parser {
 			responses.add(new SupplierResponse(itemData[index], price, itemData[index + 2]));
 			index += 3;
 		}
-		// DataStore.getInstance().addItem(new Item(id, itemData[1], itemData[2],quantity, itemData[4], responses));
 		DataStore.getInstance().addItem(Item.builder()
 				 .id(id)
 				 .buyer(itemData[1])
