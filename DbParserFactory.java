@@ -1,7 +1,7 @@
 // Swetha Valluru, Vineet Joshi
 // Professor Rani Mikkilineni
 // SupplierPortal.java
-// This is the concrete factory class that creates an XmlParser.
+// This is the concrete factory class that creates a DbParser.
 
 public class DbParserFactory implements ParserFactory {
 	private static final DbParserFactory instance = new DbParserFactory();

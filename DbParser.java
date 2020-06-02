@@ -12,7 +12,7 @@ public class DbParser implements Parser {
 	String url1 = "jdbc:mysql://localhost:3306/covidconnection";
 	String user = "root";
 	String password = "MySQL@Password!";
-	DBDataGeneratorContext generatorContext;
+	DBDataGenerator generator;
 
 	public DbParser() {
 		connectDB();
@@ -21,15 +21,15 @@ public class DbParser implements Parser {
 	// Parser readFile Implementation
 	public void readFile(String type) {
 		System.out.println("Inside DB reader!");
-		generatorContext = new DBDataGeneratorContext(ReadDbDataGenerator.getInstance());
-		generatorContext.executeStrategy(type, connection);
+		generator = ReadDbDataGenerator.getInstance();
+		generator.generate(type, connection);
 	}
 
 	// Parser writeFile Implementation
 	public void writeFile(String type) {
 		System.out.println("inside DB writeFile!");
-		generatorContext = new DBDataGeneratorContext(WriteDbDataGenerator.getInstance());
-		generatorContext.executeStrategy(type, connection);
+		generator = WriteDbDataGenerator.getInstance();
+		generator.generate(type, connection);
 	}
 
 	
