@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class SupplierFileDataGenerator implements FileDataGenerator {
-
 	private static final SupplierFileDataGenerator instance = new SupplierFileDataGenerator();
 
 	public static SupplierFileDataGenerator getInstance() {

@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.lang.Exception;
 
 public class SupplierPortal extends JPanel {
-	// NOTE: We could centralize this String array! (since it's also being used in BuyerPortal)
 	private String[] CATEGORIES = {"[SELECT CATEGORY]", "Masks", "Ventilators", "Pills", "Wheelchairs"};
 	private String[] RESPONSES = {"No Response Yet", "Accept", "Deny"};
 	private String[] SUBSCRIPTION_COLUMNS = {"My Subscriptions"};

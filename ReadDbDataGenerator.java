@@ -12,8 +12,6 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class ReadDbDataGenerator implements DBDataGenerator {
-	
-
 	Connection connection;
 	
 	private static final ReadDbDataGenerator instance = new ReadDbDataGenerator();
@@ -37,7 +35,6 @@ public class ReadDbDataGenerator implements DBDataGenerator {
 		}
 
 	}
-	
 	
 	// method to read Buyer Data
 		private void readBuyerDbData(Connection connection) {
@@ -154,5 +151,4 @@ public class ReadDbDataGenerator implements DBDataGenerator {
 			}
 
 		}
-
 }

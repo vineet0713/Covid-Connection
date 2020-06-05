@@ -1,6 +1,6 @@
 // Swetha Valluru, Vineet Joshi
 // Professor Rani Mikkilineni
-// SupplierPortal.java
+// ParserFactory.java
 // This is the factory interface for creating a Parser.
 
 public interface ParserFactory {

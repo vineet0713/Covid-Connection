@@ -1,7 +1,7 @@
 // Swetha Valluru, Vineet Joshi
 // Professor Rani Mikkilineni
-// ItemFileDataGenerator.java
-// WriteDbDataGenerator handles modifying DB data - part of Strategy Pattern
+// WriteDbDataGenerator.java
+// This class handles modifying DB data - part of Strategy Pattern
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 
 public class WriteDbDataGenerator implements DBDataGenerator {
-
 	Connection connection;
 	
 	private static final WriteDbDataGenerator instance = new WriteDbDataGenerator();
@@ -21,7 +20,6 @@ public class WriteDbDataGenerator implements DBDataGenerator {
 	public static WriteDbDataGenerator getInstance() {
 		return instance;
 	}
-	
 	
 	@Override
 	public void generate(String type, Connection connection) {

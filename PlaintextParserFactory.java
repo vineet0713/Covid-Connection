@@ -1,6 +1,6 @@
 // Swetha Valluru, Vineet Joshi
 // Professor Rani Mikkilineni
-// SupplierPortal.java
+// PlaintextParserFactory.java
 // This is the concrete factory class that creates a PlaintextParser.
 
 public class PlaintextParserFactory implements ParserFactory {

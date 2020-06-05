@@ -157,10 +157,7 @@ public class BuyerPortal extends JPanel {
 		for (int i = 0; i < responseRows; ++i) { responseModel.removeRow(0); }
 		HashSet<Item> items = DataStore.getInstance().getItemsForCurrentBuyer();
 		for (Item item : items) {
-			//if (!item.responsesExist()) {
-				requestModel.addRow(new Object[]{item.getCategory(), item.getQuantity(), item.getLocation()});
-				//continue;
-			//}
+			requestModel.addRow(new Object[]{item.getCategory(), item.getQuantity(), item.getLocation()});
 			for (SupplierResponse response : item.getResponses()) {
 				if (!response.getResponse().equals("Accept")) { continue; }
 				responseModel.addRow(new Object[]{item.getCategory(), item.getQuantity(), item.getLocation(), response.getPrice(), response.getName()});
@@ -183,7 +180,6 @@ public class BuyerPortal extends JPanel {
 				JOptionPane.showMessageDialog(null, "Your input on row " + (row + 1) + " is invalid.", null, JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			//itemsToSubmit.add(new Item(nextItemId, currentUser, category, quantity, location));
 			itemsToSubmit.add(Item.builder()
 						 .id(nextItemId)
 						 .buyer(currentUser)

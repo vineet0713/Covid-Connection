@@ -31,11 +31,9 @@ public class DbParser implements Parser {
 		generator = WriteDbDataGenerator.getInstance();
 		generator.generate(type, connection);
 	}
-
 	
 	// database connection
 	public void connectDB() {
-
 		try {
 			connection = DriverManager.getConnection(url1, user, password);
 		} catch (SQLException e) {

@@ -1,6 +1,6 @@
 // Swetha Valluru, Vineet Joshi
 // Professor Rani Mikkilineni
-// SupplierPortal.java
+// PlaintextParser.java
 // This class parses the plaintext input files and populates the DataStore.
 
 import java.lang.Exception;
